@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="ko" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>생성형 AI와 저작권의 경계 - 실무 매뉴얼</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            500: '#2563eb',
+                            600: '#1d4ed8',
+                            700: '#1e40af',
+                            900: '#1e3a8a',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'Pretendard', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+        body {
+            font-family: 'Pretendard', sans-serif;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(229, 231, 235, 0.8);
+        }
+        .dark .glass-card {
+            background: rgba(30, 41, 59, 0.85);
+            border: 1px solid rgba(51, 65, 85, 0.8);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-900 dark:text-slate-100 min-h-screen transition-colors duration-300" x-data="appData()">
+
+    <!-- Header / Navigation -->
+    <header class="sticky top-0 z-50 glass-card border-b border-slate-200 dark:border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <div class="p-2 bg-brand-600 text-white rounded-lg shadow-md">
+                        <i data-lucide="scale" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <span class="font-bold text-base text-slate-900 dark:text-white leading-none block">AI & 저작권 매뉴얼</span>
+                        <span class="text-[11px] text-slate-500 dark:text-slate-400">한국저작권위원회 가이드라인 기반 (2025)</span>
+                    </div>
+                </div>
+
+                <!-- Desktop Nav -->
+                <nav class="hidden md:flex items-center space-x-1 text-sm font-medium">
+                    <a href="#overview" class="px-3 py-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 transition">개요 & 판례</a>
+                    <a href="#spectrum" class="px-3 py-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 transition">저작물성 판별</a>
+                    <a href="#infringement" class="px-3 py-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 transition">침해 요건</a>
+                    <a href="#prompt-checker" class="px-3 py-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 transition text-brand-600 dark:text-brand-400 font-semibold">프롬프트 진단기</a>
+                    <a href="#stakeholders" class="px-3 py-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 transition">3대 주체 가이드</a>
+                    <a href="#dispute" class="px-3 py-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 transition">분쟁 조정</a>
+                </nav>
+
+                <div class="flex items-center space-x-2 sm:space-x-3">
+                    <!-- Home Button -->
+                    <a href="../index.html" class="flex items-center space-x-1 px-3 py-2 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:text-brand-600 dark:hover:text-brand-400 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition" title="메인 홈으로 이동">
+                        <i data-lucide="home" class="w-4 h-4"></i>
+                        <span>홈</span>
+                    </a>
+                    <button @click="toggleDarkMode()" class="p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-white rounded-lg border border-slate-200 dark:border-slate-700 flex items-center justify-center">
+                        <span x-show="!darkMode"><i data-lucide="moon" class="w-5 h-5"></i></span>
+                        <span x-show="darkMode" style="display:none;"><i data-lucide="sun" class="w-5 h-5"></i></span>
+                    </button>
+                    <a href="#prompt-checker" class="bg-brand-600 hover:bg-brand-700 text-white text-xs sm:text-sm font-semibold px-4 py-2 rounded-lg transition shadow-sm flex items-center space-x-1">
+                        <i data-lucide="shield-alert" class="w-4 h-4"></i>
+                        <span>위험도 진단</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Banner -->
+    <section id="overview" class="relative py-10 md:py-16 overflow-hidden bg-gradient-to-b from-brand-50 to-slate-50 dark:from-slate-800/50 dark:to-slate-900 border-b border-slate-200 dark:border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="max-w-3xl">
+                <div class="inline-flex items-center space-x-2 bg-brand-100 dark:bg-brand-900/50 text-brand-700 dark:text-brand-300 text-xs font-semibold px-3 py-1 rounded-full mb-3">
+                    <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                    <span>2025 최신 실무 가이드라인 수록</span>
+                </div>
+                <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight mb-3">
+                    생성형 AI와 저작권의 경계:<br/>
+                    <span class="text-brand-600 dark:text-brand-400">분쟁 예방 핵심 실무 매뉴얼</span>
+                </h1>
+                <p class="text-sm sm:text-base text-slate-600 dark:text-slate-300 mb-6 leading-relaxed">
+                    AI 기술의 발전과 함께 복잡해진 저작권 침해 판정 기준, 저작물 인정 조건, 그리고 원저작자·AI 이용자·AI 사업자를 위한 주체별 대응 전략을 한눈에 확인하고 진단해 보세요.
+                </p>
+
+                <!-- Key Quick Stats Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="p-3.5 rounded-xl bg-white dark:bg-slate-800 shadow-sm border border-slate-200/80 dark:border-slate-700/80">
+                        <div class="text-[11px] text-slate-500 dark:text-slate-400 mb-0.5">핵심 원칙</div>
+                        <div class="text-base font-bold text-slate-900 dark:text-white">AI = 저작자 불가</div>
+                        <p class="text-[11px] text-slate-500 mt-0.5">인간의 창작적 개입이 핵심 요건</p>
+                    </div>
+                    <div class="p-3.5 rounded-xl bg-white dark:bg-slate-800 shadow-sm border border-slate-200/80 dark:border-slate-700/80">
+                        <div class="text-[11px] text-slate-500 dark:text-slate-400 mb-0.5">침해 성립 요건</div>
+                        <div class="text-base font-bold text-slate-900 dark:text-white">의거성 + 실질적 유사성</div>
+                        <p class="text-[11px] text-slate-500 mt-0.5">두 요건 모두 충족 시 침해</p>
+                    </div>
+                    <div class="p-3.5 rounded-xl bg-white dark:bg-slate-800 shadow-sm border border-slate-200/80 dark:border-slate-700/80">
+                        <div class="text-[11px] text-slate-500 dark:text-slate-400 mb-0.5">분쟁 해결 제도</div>
+                        <div class="text-base font-bold text-slate-900 dark:text-white">3개월 내 신속 조정</div>
+                        <p class="text-[11px] text-slate-500 mt-0.5">한국저작권위원회 법적 효력</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content Area -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
+
+        <!-- Section 1: Landmark Case & Idea-Expression Dichotomy -->
+        <section class="space-y-8">
+            <div class="border-b border-slate-200 dark:border-slate-800 pb-4">
+                <span class="text-xs font-bold uppercase tracking-wider text-brand-600 dark:text-brand-400">Chapter 01</span>
+                <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mt-1">랜드마크 판결 및 기본 법리</h2>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Case Card: Thaler v. Perlmutter -->
+                <div class="p-6 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="px-3 py-1 bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300 font-bold text-xs rounded-full">
+                                대표 판례 (2023)
+                            </span>
+                            <span class="text-xs text-slate-400">미국 연방대법원 상고 기각</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">
+                            탈러 vs 퍼멀터 판결 (Thaler v. Perlmutter)
+                        </h3>
+                        <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed mb-4">
+                            AI 시스템 <strong class="text-slate-900 dark:text-white">'Creativity Machine'</strong>이 오직 독자적으로 생성한 미술 작품의 저작권 등록 거부 처분이 미국 대법원에서 최종 확정되었습니다.
+                        </p>
+
+                        <div class="p-4 bg-slate-50 dark:bg-slate-900/60 rounded-xl border-l-4 border-red-500 mb-4 space-y-2 text-sm">
+                            <div class="font-bold text-red-600 dark:text-red-400">판결 핵심 요지:</div>
+                            <p class="text-slate-700 dark:text-slate-300">
+                                "인간의 창작적 개입(Human Authorship)이 존재하지 않는 AI 단독 산출물은 법적 저작권 보호 대상에서 제외된다."
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-t border-slate-100 dark:border-slate-700/60 flex items-center text-xs text-slate-500">
+                        <i data-lucide="info" class="w-4 h-4 mr-1.5 text-brand-500"></i>
+                        AI는 저작권법상 '저작자(Author)'의 자격을 가질 수 없습니다.
+                    </div>
+                </div>
+
+                <!-- Interactive Funnel: Idea vs Expression -->
+                <div class="p-6 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm">
+                    <div class="mb-4">
+                        <span class="px-3 py-1 bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 font-bold text-xs rounded-full">
+                            법적 필터링 메커니즘
+                        </span>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white mt-2">아이디어-표현 이분법 필터</h3>
+                        <p class="text-xs text-slate-500 mt-1">항목을 클릭하여 저작권 보호 대상 여부를 확인해 보세요.</p>
+                    </div>
+
+                    <!-- Funnel Visual Interactive -->
+                    <div class="space-y-3" x-data="{ activeTab: 'all' }">
+                        <div class="p-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-dashed border-slate-300 dark:border-slate-700 text-center">
+                            <div class="text-xs text-slate-400 mb-2">필터 상단: 아이디어 영역 (보호 불가 ❌)</div>
+                            <div class="flex flex-wrap justify-center gap-2">
+                                <span class="px-3 py-1.5 bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-200 text-xs rounded-lg font-medium shadow-sm">
+                                    추상적인 테마
+                                </span>
+                                <span class="px-3 py-1.5 bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-200 text-xs rounded-lg font-medium shadow-sm">
+                                    특정 작가의 화풍/학풍
+                                </span>
+                                <span class="px-3 py-1.5 bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-200 text-xs rounded-lg font-medium shadow-sm">
+                                    단순 기법 및 아이디어
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-center text-slate-400">
+                            <i data-lucide="arrow-down font-bold" class="w-6 h-6 animate-bounce"></i>
+                        </div>
+
+                        <div class="p-4 bg-emerald-50 dark:bg-emerald-950/30 rounded-xl border border-emerald-300 dark:border-emerald-800 text-center">
+                            <div class="text-xs text-emerald-600 dark:text-emerald-400 mb-2 font-semibold">필터 통과: 창작적 표현물 (보호 대상 ✅)</div>
+                            <div class="flex justify-center">
+                                <span class="px-4 py-2 bg-emerald-600 text-white text-xs rounded-lg font-bold shadow flex items-center gap-1.5">
+                                    <i data-lucide="copyright" class="w-4 h-4"></i>
+                                    구체적으로 외부에 표현된 창작적 표현물
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 p-3 bg-slate-100 dark:bg-slate-700/50 rounded-lg text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                        💡 <strong>핵심:</strong> 아이디어 자체는 독점적 보호 대상이 될 수 없으며, 아이디어에 의해 구체적으로 작성된 표현물만이 저작권 보호 대상이 됩니다.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Human Involvement Spectrum Matrix -->
+        <section id="spectrum" class="space-y-8">
+            <div class="border-b border-slate-200 dark:border-slate-800 pb-4">
+                <span class="text-xs font-bold uppercase tracking-wider text-brand-600 dark:text-brand-400">Chapter 02</span>
+                <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mt-1">인간 개입 수준에 따른 저작물성 판별</h2>
+                <p class="text-sm text-slate-500 mt-1">슬라이더를 조절하여 인간의 기여도에 따른 저작권 인정 가능성을 확인하세요.</p>
+            </div>
+
+            <div class="p-6 sm:p-8 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm space-y-8" x-data="{ involvement: 60 }">
+                <!-- Interactive Slider -->
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <label class="font-bold text-slate-900 dark:text-white text-sm sm:text-base flex items-center gap-2">
+                            <i data-lucide="user-check" class="w-5 h-5 text-brand-600"></i>
+                            인간의 창작적 기여 비율 (Human Contribution):
+                        </label>
+                        <span class="text-xl font-extrabold text-brand-600 dark:text-brand-400" x-text="involvement + '%'"></span>
+                    </div>
+
+                    <input type="range" min="0" max="100" step="5" x-model="involvement" 
+                        class="w-full h-3 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-brand-600">
+                    
+                    <div class="flex justify-between text-xs text-slate-400 font-medium">
+                        <span>0% (단순 AI 생성)</span>
+                        <span>50% (수정·선택·배열)</span>
+                        <span>100% (인간 직접 창작)</span>
+                    </div>
+                </div>
+
+                <!-- Dynamic Matrix Output Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- GAI-Generated Card -->
+                    <div class="p-5 rounded-xl border transition-all duration-300"
+                        :class="involvement < 40 ? 'border-red-500 bg-red-50/50 dark:bg-red-950/20 shadow-md ring-2 ring-red-500/20' : 'border-slate-200 dark:border-slate-700 opacity-60'">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-bold px-2.5 py-1 rounded bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300">
+                                GAI-Generated (산출물)
+                            </span>
+                            <span class="text-xs font-semibold" :class="involvement < 40 ? 'text-red-600 dark:text-red-400 font-bold' : 'text-slate-400'">
+                                저작권 보호 불가 ❌
+                            </span>
+                        </div>
+                        <h4 class="font-bold text-slate-900 dark:text-white mb-2">인간 개입 0% ~ 낮음</h4>
+                        <ul class="text-xs space-y-2 text-slate-600 dark:text-slate-300 leading-relaxed">
+                            <li>• <strong>정의:</strong> 단순 지시나 키워드 입력에 따른 AI 자동 결과물</li>
+                            <li>• <strong>창작적 기여 요건:</strong> 없음 또는 극히 미비</li>
+                            <li>• <strong>저작권 등록:</strong> 한국저작권위원회 등록 불인정</li>
+                        </ul>
+                    </div>
+
+                    <!-- GAI-Assisted Card -->
+                    <div class="p-5 rounded-xl border transition-all duration-300"
+                        :class="involvement >= 40 ? 'border-emerald-500 bg-emerald-50/50 dark:bg-emerald-950/20 shadow-md ring-2 ring-emerald-500/20' : 'border-slate-200 dark:border-slate-700 opacity-60'">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-bold px-2.5 py-1 rounded bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300">
+                                GAI-Assisted (활용 저작물)
+                            </span>
+                            <span class="text-xs font-semibold" :class="involvement >= 40 ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-400'">
+                                저작권 보호 가능성 있음 ✅
+                            </span>
+                        </div>
+                        <h4 class="font-bold text-slate-900 dark:text-white mb-2">인간 개입 높음</h4>
+                        <ul class="text-xs space-y-2 text-slate-600 dark:text-slate-300 leading-relaxed">
+                            <li>• <strong>정의:</strong> AI를 보조 도구로 활용하고 인간의 고유한 기여가 부가된 결과물</li>
+                            <li>• <strong>창작적 기여 인정 요건:</strong>
+                                <ul class="pl-3 mt-1 list-disc space-y-1 text-slate-500 dark:text-slate-400">
+                                    <li>구체적인 기획 및 스토리라인 설계</li>
+                                    <li>AI 생성물의 직접적 수정, 리터칭 및 증감</li>
+                                    <li>요소들의 독창적인 선택, 편집 및 배치</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Infringement Criteria & RAG Risk -->
+        <section id="infringement" class="space-y-8">
+            <div class="border-b border-slate-200 dark:border-slate-800 pb-4">
+                <span class="text-xs font-bold uppercase tracking-wider text-brand-600 dark:text-brand-400">Chapter 03</span>
+                <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mt-1">저작권 침해 성립 요건 & RAG 기술 리스크</h2>
+            </div>
+
+            <!-- Two-Column Layout -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Infringement Equation Box (2 cols) -->
+                <div class="lg:col-span-2 p-6 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm space-y-6">
+                    <h3 class="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                        <i data-lucide="scale" class="w-5 h-5 text-brand-600"></i>
+                        저작권 침해 판단의 2대 축
+                    </h3>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-5 gap-3 items-center text-center">
+                        <!-- Element 1 -->
+                        <div class="sm:col-span-2 p-4 rounded-xl bg-blue-50 dark:bg-slate-900 border border-blue-200 dark:border-slate-700 text-left">
+                            <div class="flex items-center space-x-2 text-blue-600 dark:text-blue-400 font-bold mb-1">
+                                <i data-lucide="lock" class="w-4 h-4"></i>
+                                <span>1. 의거성 (Reliance/Access)</span>
+                            </div>
+                            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                                기존의 특정 저작물을 인식하고 이에 근거하여 만들어졌는가?
+                            </p>
+                            <div class="mt-2 text-[11px] text-slate-500 bg-white dark:bg-slate-800 p-2 rounded border border-slate-100 dark:border-slate-700">
+                                📌 <strong>판단 기준:</strong> 프롬프트에 특정 저작물/작가 명시 여부, 학습 데이터 포함 여부 등
+                            </div>
+                        </div>
+
+                        <!-- Plus Sign -->
+                        <div class="sm:col-span-1 font-extrabold text-2xl text-brand-600 dark:text-brand-400">
+                            +
+                        </div>
+
+                        <!-- Element 2 -->
+                        <div class="sm:col-span-2 p-4 rounded-xl bg-indigo-50 dark:bg-slate-900 border border-indigo-200 dark:border-slate-700 text-left">
+                            <div class="flex items-center space-x-2 text-indigo-600 dark:text-indigo-400 font-bold mb-1">
+                                <i data-lucide="copy" class="w-4 h-4"></i>
+                                <span>2. 실질적 유사성</span>
+                            </div>
+                            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                                보호받는 '창작적 표현'이 기존 저작물과 동일하거나 유사한가?
+                            </p>
+                            <div class="mt-2 text-[11px] text-slate-500 bg-white dark:bg-slate-800 p-2 rounded border border-slate-100 dark:border-slate-700">
+                                📌 <strong>주의:</strong> 단순 아이디어 유사성은 제외되며, 구체적 표현 형태 비교
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Result Alert -->
+                    <div class="p-4 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 flex items-start space-x-3">
+                        <i data-lucide="alert-triangle" class="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5"></i>
+                        <div class="text-xs text-red-800 dark:text-red-200 leading-relaxed">
+                            <strong class="font-bold text-red-900 dark:text-red-100">결과: 의거성 AND 실질적 유사성 모두 충족 시 저작권 침해 성립!</strong><br/>
+                            ※ 우연히 일치한 경우(독립 창작)이거나 아이디어 수준만 유사한 경우에는 침해가 성립하지 않습니다.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RAG System Warning Box (1 col) -->
+                <div class="p-6 rounded-2xl bg-amber-50/60 dark:bg-slate-800 border border-amber-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center space-x-2 text-amber-700 dark:text-amber-400 font-bold mb-3">
+                            <i data-lucide="database" class="w-5 h-5"></i>
+                            <span>RAG (검색증강생성)와 법적 리스크</span>
+                        </div>
+                        <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mb-3">
+                            실시간 외부 DB를 참조하여 답변을 생성하는 RAG 시스템은 환각(Hallucination)을 줄여주지만, 저작권 이슈의 사각지대가 발생할 수 있습니다.
+                        </p>
+
+                        <div class="space-y-2 text-xs">
+                            <div class="p-2.5 bg-white dark:bg-slate-900 rounded-lg border border-amber-200 dark:border-slate-700">
+                                <strong class="text-amber-700 dark:text-amber-300">⚠️ 리스크 포인트:</strong><br/>
+                                외부 지식 베이스 참조 시 타인의 저작물 원문이 그대로 복사되어 출력될 가능성 존재.
+                            </div>
+                            <div class="p-2.5 bg-emerald-100/60 dark:bg-emerald-950/40 rounded-lg text-emerald-800 dark:text-emerald-300">
+                                <strong class="font-bold">✅ 필수 해결책:</strong><br/>
+                                DB 구축 시 사전 이용 허락(License) 확보 필수.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Interactive Prompt Risk Diagnostic Tool -->
+        <section id="prompt-checker" class="space-y-8">
+            <div class="border-b border-slate-200 dark:border-slate-800 pb-4">
+                <span class="text-xs font-bold uppercase tracking-wider text-brand-600 dark:text-brand-400">Chapter 04</span>
+                <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mt-1">대화형 프롬프트 위험도 진단기</h2>
+                <p class="text-sm text-slate-500 mt-1">입력하려는 프롬프트의 저작권 침해 위험도를 사전에 검증해 보세요.</p>
+            </div>
+
+            <div class="p-6 sm:p-8 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-md space-y-6">
+                <!-- Preset Sample Buttons -->
+                <div>
+                    <span class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-2">실무 예시 샘플 선택:</span>
+                    <div class="flex flex-wrap gap-2">
+                        <button @click="setPrompt('movie')" class="px-3 py-1.5 bg-red-50 hover:bg-red-100 dark:bg-red-950/40 text-red-700 dark:text-red-300 text-xs rounded-lg border border-red-200 dark:border-red-800 transition">
+                            🚨 고위험 예시 1: 영화 결말 변형
+                        </button>
+                        <button @click="setPrompt('character')" class="px-3 py-1.5 bg-red-50 hover:bg-red-100 dark:bg-red-950/40 text-red-700 dark:text-red-300 text-xs rounded-lg border border-red-200 dark:border-red-800 transition">
+                            🚨 고위험 예시 2: 특정 캐릭터 명시
+                        </button>
+                        <button @click="setPrompt('safe1')" class="px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 text-xs rounded-lg border border-emerald-200 dark:border-emerald-800 transition">
+                            🛡️ 저위험 예시: 구체적 일반 묘사
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Input Textarea -->
+                <div class="space-y-2">
+                    <label class="block text-sm font-bold text-slate-900 dark:text-white">프롬프트 입력창:</label>
+                    <textarea x-model="userPrompt" rows="3" placeholder="여기에 입력할 프롬프트를 작성하세요..."
+                        class="w-full p-4 text-sm rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-brand-500 focus:outline-none"></textarea>
+                </div>
+
+                <!-- Analysis Result Display -->
+                <div x-show="userPrompt.trim().length > 0" x-transition class="p-5 rounded-xl border"
+                    :class="analyzedRisk === 'HIGH' ? 'bg-red-50 border-red-300 dark:bg-red-950/30 dark:border-red-800' : 'bg-emerald-50 border-emerald-300 dark:bg-emerald-950/30 dark:border-emerald-800'">
+                    
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span x-show="analyzedRisk === 'HIGH'">
+                                <i data-lucide="shield-alert" class="w-6 h-6 text-red-600"></i>
+                            </span>
+                            <span x-show="analyzedRisk !== 'HIGH'" style="display:none;">
+                                <i data-lucide="shield-check" class="w-6 h-6 text-emerald-600"></i>
+                            </span>
+                            <span class="font-extrabold text-base" :class="analyzedRisk === 'HIGH' ? 'text-red-700 dark:text-red-300' : 'text-emerald-700 dark:text-emerald-300'"
+                                x-text="analyzedRisk === 'HIGH' ? '고위험군 (HIGH RISK) - 저작권 침해 우려' : '저위험군 (LOW RISK) - 비교적 안전함'"></span>
+                        </div>
+                        <span class="text-xs px-2.5 py-1 rounded-full font-bold"
+                            :class="analyzedRisk === 'HIGH' ? 'bg-red-200 text-red-800' : 'bg-emerald-200 text-emerald-800'"
+                            x-text="analyzedRisk === 'HIGH' ? '의거성 강하게 추정' : '의거성 미달 방어 가능'"></span>
+                    </div>
+
+                    <p class="text-xs sm:text-sm text-slate-700 dark:text-slate-200 leading-relaxed" x-text="riskExplanation"></p>
+
+                    <div class="mt-4 pt-3 border-t border-slate-200/60 dark:border-slate-700/60 text-xs font-semibold"
+                         :class="analyzedRisk === 'HIGH' ? 'text-red-700 dark:text-red-400' : 'text-emerald-700 dark:text-emerald-400'">
+                        💡 <strong>개선 가이드:</strong> <span x-text="riskRecommendation"></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: 3-Way Stakeholder Guidelines -->
+        <section id="stakeholders" class="space-y-8">
+            <div class="border-b border-slate-200 dark:border-slate-800 pb-4">
+                <span class="text-xs font-bold uppercase tracking-wider text-brand-600 dark:text-brand-400">Chapter 05</span>
+                <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mt-1">생태계 3대 주체별 실무 가이드</h2>
+                <p class="text-sm text-slate-500 mt-1">저작권 분쟁 예방은 단일 주체의 문제가 아니며, 상호 견제와 책임 분배를 통해 완성됩니다.</p>
+            </div>
+
+            <!-- Tab Switcher -->
+            <div x-data="{ tab: 'creator' }" class="space-y-6">
+                <div class="flex border-b border-slate-200 dark:border-slate-700">
+                    <button @click="tab = 'creator'" 
+                        :class="tab === 'creator' ? 'border-brand-600 text-brand-600 dark:text-brand-400 font-bold' : 'border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'"
+                        class="py-3 px-4 sm:px-6 border-b-2 text-sm sm:text-base transition flex items-center gap-2">
+                        <i data-lucide="shield" class="w-4 h-4"></i>
+                        <span>1. 원저작권자 (Creator)</span>
+                    </button>
+                    <button @click="tab = 'user'" 
+                        :class="tab === 'user' ? 'border-brand-600 text-brand-600 dark:text-brand-400 font-bold' : 'border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'"
+                        class="py-3 px-4 sm:px-6 border-b-2 text-sm sm:text-base transition flex items-center gap-2">
+                        <i data-lucide="user" class="w-4 h-4"></i>
+                        <span>2. AI 이용자 (User)</span>
+                    </button>
+                    <button @click="tab = 'provider'" 
+                        :class="tab === 'provider' ? 'border-brand-600 text-brand-600 dark:text-brand-400 font-bold' : 'border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'"
+                        class="py-3 px-4 sm:px-6 border-b-2 text-sm sm:text-base transition flex items-center gap-2">
+                        <i data-lucide="cpu" class="w-4 h-4"></i>
+                        <span>3. AI 사업자 (Provider)</span>
+                    </button>
+                </div>
+
+                <!-- Tab 1: Creator -->
+                <div x-show="tab === 'creator'" x-transition class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="p-5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm">
+                        <div class="w-10 h-10 rounded-lg bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-300 flex items-center justify-center mb-3">
+                            <i data-lucide="code" class="w-5 h-5"></i>
+                        </div>
+                        <h4 class="font-bold text-slate-900 dark:text-white text-base mb-1">기술적 크롤링 차단</h4>
+                        <p class="text-xs text-slate-500 mb-2">robots.txt 설정</p>
+                        <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mb-3">
+                            무단 웹 스크래핑 및 AI 학습 로봇을 차단하는 로봇 배제 표준을 웹사이트 서버에 등록합니다.
+                        </p>
+                        <div class="p-2.5 bg-slate-100 dark:bg-slate-900 rounded font-mono text-[11px] text-slate-700 dark:text-slate-300">
+                            User-agent: *<br/>Disallow: /
+                        </div>
+                    </div>
+
+                    <div class="p-5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm">
+                        <div class="w-10 h-10 rounded-lg bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-300 flex items-center justify-center mb-3">
+                            <i data-lucide="file-check" class="w-5 h-5"></i>
+                        </div>
+                        <h4 class="font-bold text-slate-900 dark:text-white text-base mb-1">메타데이터 및 RMI 삽입</h4>
+                        <p class="text-xs text-slate-500 mb-2">권리관리정보 내장</p>
+                        <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                            디지털 저작권 관리(DRM) 및 EXIF/메타데이터에 저작권자 정보, 이용 허락 조건(RMI)을 내장하여 무단 도용 방지.
+                        </p>
+                    </div>
+
+                    <div class="p-5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm">
+                        <div class="w-10 h-10 rounded-lg bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-300 flex items-center justify-center mb-3">
+                            <i data-lucide="search" class="w-5 h-5"></i>
+                        </div>
+                        <h4 class="font-bold text-slate-900 dark:text-white text-base mb-1">학습 거부 플랫폼 활용</h4>
+                        <p class="text-xs text-slate-500 mb-2">Opt-out 요청</p>
+                        <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                            haveibeentrained.com 등 학습 데이터 포함 여부를 조회하고 거부(Opt-out)권을 적극 행사하여 삭제 요청.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Tab 2: User -->
+                <div x-show="tab === 'user'" x-transition class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="p-5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm">
+                        <div class="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-600 dark:bg-emerald-900/50 dark:text-emerald-300 flex items-center justify-center mb-3">
+                            <i data-lucide="sparkles" class="w-5 h-5"></i>
+                        </div>
+                        <h4 class="font-bold text-slate-900 dark:text-white text-base mb-1">프롬프트 클렌징</h4>
+                        <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                            타인의 권리를 침해할 수 있는 특정 작가명, 캐릭터명, 영업비밀, 원작 텍스트 고유명사 직접 입력 자제.
+                        </p>
+                    </div>
+
+                    <div class="p-5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm">
+                        <div class="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-600 dark:bg-emerald-900/50 dark:text-emerald-300 flex items-center justify-center mb-3">
+                            <i data-lucide="eye" class="w-5 h-5"></i>
+                        </div>
+                        <h4 class="font-bold text-slate-900 dark:text-white text-base mb-1">결과물 사전 검증</h4>
+                        <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                            상업적 배포 전 기존 저작물과의 실질적 유사성(이미지 검색, 표절 검사)을 스스로 자체 필터링.
+                        </p>
+                    </div>
+
+                    <div class="p-5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm">
+                        <div class="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-600 dark:bg-emerald-900/50 dark:text-emerald-300 flex items-center justify-center mb-3">
+                            <i data-lucide="file-text" class="w-5 h-5"></i>
+                        </div>
+                        <h4 class="font-bold text-slate-900 dark:text-white text-base mb-1">약관(ToS) & 책임 인지</h4>
+                        <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                            AI 서비스 약관의 상업적 허용 여부를 점검하고, 저작권 침해 시 법적 책임은 산출물을 배포한 '이용자'에게 귀속됨을 유의.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Tab 3: Provider -->
+                <div x-show="tab === 'provider'" x-transition class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="p-5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm">
+                        <div class="flex items-center justify-between mb-2">
+                            <h4 class="font-bold text-slate-900 dark:text-white text-base">일반 GAI 서비스 운영</h4>
+                            <span class="text-xs bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded">책임 분산</span>
+                        </div>
+                        <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                            방대한 일반 데이터 학습 과정의 침해는 프롬프트 의도에 따라 이용자와 책임 분산 가능. 사전 학습 데이터 투명성 확보 권장.
+                        </p>
+                    </div>
+
+                    <div class="p-5 rounded-xl bg-white dark:bg-slate-800 border border-red-300 dark:border-red-900/60 shadow-sm">
+                        <div class="flex items-center justify-between mb-2">
+                            <h4 class="font-bold text-red-700 dark:text-red-400 text-base">파인튜닝 및 맞춤형 개발</h4>
+                            <span class="text-xs bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300 px-2 py-1 rounded font-bold">책임 가중 ⚠️</span>
+                        </div>
+                        <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                            특정 작가의 저작물을 라이선스 없이 '집중적 추가 학습(Fine-tuning)' 하거나 타깃 데이터를 무단 사용한 경우, 사업자에게 직접 침해 책임이 무겁게 부과됨.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 6: Dispute Resolution Process -->
+        <section id="dispute" class="space-y-8">
+            <div class="border-b border-slate-200 dark:border-slate-800 pb-4">
+                <span class="text-xs font-bold uppercase tracking-wider text-brand-600 dark:text-brand-400">Chapter 06</span>
+                <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mt-1">분쟁 발생 시 대응: 한국저작권위원회 조정 제도</h2>
+                <p class="text-sm text-slate-500 mt-1">소송 전 신속하고 경제적인 대체적 분쟁 해결(ADR) 수단입니다.</p>
+            </div>
+
+            <!-- Process Roadmap Steps -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="p-5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 relative overflow-hidden">
+                    <span class="text-3xl font-black text-slate-200 dark:text-slate-700 absolute top-2 right-3">01</span>
+                    <div class="font-bold text-slate-900 dark:text-white text-base mb-1">조정 신청</div>
+                    <p class="text-xs text-slate-500">당사자의 신청 접수</p>
+                </div>
+                <div class="p-5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 relative overflow-hidden">
+                    <span class="text-3xl font-black text-slate-200 dark:text-slate-700 absolute top-2 right-3">02</span>
+                    <div class="font-bold text-slate-900 dark:text-white text-base mb-1">조정부 지정</div>
+                    <p class="text-xs text-slate-500">전문가 3인 지목</p>
+                </div>
+                <div class="p-5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 relative overflow-hidden">
+                    <span class="text-3xl font-black text-slate-200 dark:text-slate-700 absolute top-2 right-3">03</span>
+                    <div class="font-bold text-slate-900 dark:text-white text-base mb-1">조정 진행</div>
+                    <p class="text-xs text-slate-500">의견 청취 및 중재</p>
+                </div>
+                <div class="p-5 rounded-xl bg-brand-600 text-white border border-brand-700 relative overflow-hidden">
+                    <span class="text-3xl font-black text-brand-400/40 absolute top-2 right-3">04</span>
+                    <div class="font-bold text-base mb-1">성립 / 직권조정</div>
+                    <p class="text-xs text-brand-100">법원 확정판결과 동일 효력</p>
+                </div>
+            </div>
+
+            <!-- Benefits Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 flex items-start space-x-3">
+                    <div class="p-2 bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-300 rounded-lg">
+                        <i data-lucide="zap" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-slate-900 dark:text-white text-sm">신속성</h4>
+                        <p class="text-xs text-slate-500 mt-0.5">신청일로부터 3개월 이내 신속 처리</p>
+                    </div>
+                </div>
+
+                <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 flex items-start space-x-3">
+                    <div class="p-2 bg-purple-100 text-purple-600 dark:bg-purple-900/50 dark:text-purple-300 rounded-lg">
+                        <i data-lucide="award" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-slate-900 dark:text-white text-sm">전문성</h4>
+                        <p class="text-xs text-slate-500 mt-0.5">변호사 포함 전문가 3인의 세밀한 조력</p>
+                    </div>
+                </div>
+
+                <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 flex items-start space-x-3">
+                    <div class="p-2 bg-emerald-100 text-emerald-600 dark:bg-emerald-900/50 dark:text-emerald-300 rounded-lg">
+                        <i data-lucide="coins" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-slate-900 dark:text-white text-sm">경제성</h4>
+                        <p class="text-xs text-slate-500 mt-0.5">소송 대비 수임료 및 인지대 과다 절감</p>
+                    </div>
+                </div>
+
+                <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 flex items-start space-x-3">
+                    <div class="p-2 bg-amber-100 text-amber-600 dark:bg-amber-900/50 dark:text-amber-300 rounded-lg">
+                        <i data-lucide="lock" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-slate-900 dark:text-white text-sm">비공개성</h4>
+                        <p class="text-xs text-slate-500 mt-0.5">기업 영업비밀 및 개인정보 철저 보장</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 7: Knowledge Self-Quiz -->
+        <section class="space-y-8">
+            <div class="border-b border-slate-200 dark:border-slate-800 pb-4">
+                <span class="text-xs font-bold uppercase tracking-wider text-brand-600 dark:text-brand-400">Quiz</span>
+                <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mt-1">이해도 자가 진단 퀴즈</h2>
+            </div>
+
+            <div class="p-6 sm:p-8 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm space-y-6" x-data="quizData()">
+                <div class="flex justify-between items-center text-xs text-slate-500 font-semibold">
+                    <span>Q<span x-text="currentStep + 1"></span> / <span x-text="questions.length"></span></span>
+                    <span>점수: <span x-text="score"></span>점</span>
+                </div>
+
+                <div class="text-base sm:text-lg font-bold text-slate-900 dark:text-white" x-text="questions[currentStep].question"></div>
+
+                <div class="space-y-3">
+                    <template x-for="(opt, idx) in questions[currentStep].options" :key="idx">
+                        <button @click="selectAnswer(idx)" 
+                            :disabled="answered"
+                            class="w-full text-left p-4 rounded-xl border text-sm font-medium transition flex justify-between items-center"
+                            :class="getOptionClass(idx)">
+                            <span x-text="opt"></span>
+                            <span x-show="answered && idx === questions[currentStep].answer" style="display:none;">
+                                <i data-lucide="check-circle" class="w-5 h-5 text-emerald-600"></i>
+                            </span>
+                        </button>
+                    </template>
+                </div>
+
+                <div x-show="answered" x-transition class="p-4 rounded-xl bg-slate-100 dark:bg-slate-700/50 text-xs text-slate-700 dark:text-slate-200 leading-relaxed space-y-2">
+                    <div class="font-bold text-sm" x-text="selectedAnswer === questions[currentStep].answer ? '🎉 정답입니다!' : '❌ 오답입니다.'"></div>
+                    <p x-text="questions[currentStep].explanation"></p>
+                    <div class="pt-2">
+                        <button @click="nextQuestion()" class="px-4 py-2 bg-brand-600 text-white rounded-lg text-xs font-bold">
+                            <span x-text="currentStep + 1 < questions.length ? '다음 문제' : '퀴즈 완료 및 다시풀기'"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Executive Summary Footer Banner -->
+        <section class="p-8 rounded-2xl bg-gradient-to-r from-slate-900 via-brand-950 to-slate-900 text-white shadow-xl text-center space-y-4">
+            <h3 class="text-2xl font-extrabold tracking-tight">Executive Summary</h3>
+            <blockquote class="text-sm sm:text-base text-slate-300 italic max-w-3xl mx-auto leading-relaxed">
+                "AI는 저작자가 될 수 없으며, 보호받는 것은 오직 인간의 창작적 기여뿐입니다.<br/>
+                프롬프트 입력의 책임은 <span class="text-brand-400 font-bold">이용자</span>에게, 의도적 집중 학습의 책임은 <span class="text-brand-400 font-bold">사업자</span>에게 향합니다."
+            </blockquote>
+            <p class="text-xs text-slate-400 pt-2 border-t border-slate-800 max-w-md mx-auto">
+                혁신과 창작의 경계, 올바른 이해와 선제적 예방이 가장 완벽한 해법입니다.
+            </p>
+
+            <!-- Action Buttons Grid -->
+            <div class="pt-4 flex flex-wrap justify-center gap-3">
+                <button @click="downloadPresentation()" class="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs sm:text-sm font-bold shadow-lg shadow-brand-600/30 transition transform hover:-translate-y-0.5 active:translate-y-0">
+                    <i data-lucide="download" class="w-4.5 h-4.5"></i>
+                    <span>발표 자료 다운로드</span>
+                </button>
+                <button @click="openInfographicModal()" class="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-100 border border-slate-700 text-xs sm:text-sm font-bold shadow-md transition transform hover:-translate-y-0.5 active:translate-y-0">
+                    <i data-lucide="file-image" class="w-4.5 h-4.5 text-brand-400"></i>
+                    <span>인포그래픽 보기</span>
+                </button>
+                <button @click="openVideoModal()" class="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-100 border border-slate-700 text-xs sm:text-sm font-bold shadow-md transition transform hover:-translate-y-0.5 active:translate-y-0">
+                    <i data-lucide="play-circle" class="w-4.5 h-4.5 text-red-400"></i>
+                    <span>동영상 보기</span>
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal: Infographic Viewer -->
+    <div x-show="showInfographicModal" x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm" style="display: none;">
+        <div @click.away="showInfographicModal = false" class="bg-white dark:bg-slate-800 rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl border border-slate-200 dark:border-slate-700 relative">
+            <button @click="showInfographicModal = false" class="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 dark:hover:text-white rounded-lg z-10 bg-white/80 dark:bg-slate-800/80 backdrop-blur">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            
+            <div class="flex items-center space-x-2 text-brand-600 dark:text-brand-400 font-bold mb-2">
+                <i data-lucide="file-image" class="w-5 h-5"></i>
+                <span class="text-xs uppercase tracking-wider">한눈에 보는 핵심 요약</span>
+            </div>
+            <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-4">생성형 AI 저작권 판정 및 리스크 가이드 인포그래픽</h3>
+            
+            <div class="p-2 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 flex justify-center items-center min-h-[300px]">
+                <img src="guide.png" 
+                     alt="생성형 AI 저작권 가이드 인포그래픽" 
+                     class="max-w-full h-auto rounded-lg shadow-md object-contain"
+                     onerror="this.onerror=null; this.src='https://placehold.co/800x1200/2563eb/ffffff?text=guide.png+%EC%9D%B4%EB%AF%B8%EC%A7%80%EB%A5%BC+%EC%B0%B8%EC%조%95%ED%95%A0+%EC%88%98+%EC%97%86%EC%8A%B5%EB%8B%88%EB%8B%A4';">
+            </div>
+
+            <div class="mt-6 flex justify-end space-x-3">
+                <button @click="showInfographicModal = false" class="px-4 py-2 bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-lg text-xs font-semibold hover:bg-slate-300 dark:hover:bg-slate-600 transition">
+                    닫기
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Video Player Guide -->
+    <div x-show="showVideoModal" x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm" style="display: none;">
+        <div @click.away="closeVideoModal()" class="bg-white dark:bg-slate-800 rounded-2xl max-w-4xl w-full p-6 shadow-2xl border border-slate-200 dark:border-slate-700 relative">
+            <button @click="closeVideoModal()" class="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 dark:hover:text-white rounded-lg z-10 bg-white/80 dark:bg-slate-800/80 backdrop-blur">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            
+            <div class="flex items-center space-x-2 text-red-600 dark:text-red-400 font-bold mb-2">
+                <i data-lucide="video" class="w-5 h-5"></i>
+                <span class="text-xs uppercase tracking-wider">시청각 해설 안내</span>
+            </div>
+            <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-4">생성형 AI와 저작권 가이드라인 영상 해설</h3>
+
+            <div class="relative aspect-video rounded-xl bg-slate-950 overflow-hidden flex items-center justify-center border border-slate-800 shadow-inner">
+                <video x-ref="guideVideo" controls class="w-full h-full rounded-xl object-contain">
+                    <source src="video.mp4" type="video/mp4">
+                    사용 중인 브라우저가 동영상 재생을 지원하지 않습니다.
+                </video>
+            </div>
+
+            <p class="text-xs text-slate-500 mt-3">
+                ※ 생성형 AI 저작물 등록 기준 및 실무 분쟁 조정 절차에 관한 상세 해설이 포함되어 있습니다.
+            </p>
+
+            <div class="mt-6 flex justify-end">
+                <button @click="closeVideoModal()" class="px-4 py-2 bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-lg text-xs font-semibold hover:bg-slate-300 dark:hover:bg-slate-600 transition">
+                    닫기
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Download Notification Toast -->
+    <div x-show="showToast" x-transition:enter="transition ease-out duration-300 transform" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-200 transform" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 translate-y-4" class="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-5 py-3.5 rounded-xl shadow-2xl border border-slate-700 flex items-center space-x-3" style="display: none;">
+        <i data-lucide="check-circle" class="w-5 h-5 text-emerald-400"></i>
+        <div>
+            <div class="text-xs font-bold" x-text="toastTitle">발표 자료 다운로드 시작</div>
+            <div class="text-[11px] text-slate-400" x-text="toastMessage">AI_저작권_실무매뉴얼_2025.pdf 준비 중입니다.</div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-200 dark:border-slate-800 py-8 bg-white dark:bg-slate-900 text-center text-xs text-slate-500">
+        <p>한국저작권위원회 생성형 AI 저작권 가이드라인 (2025) 내용 기반 인터랙티브 매뉴얼</p>
+    </footer>
+
+    <!-- Alpine JS Application Logic -->
+    <script>
+        function appData() {
+            return {
+                darkMode: false,
+                userPrompt: '',
+                analyzedRisk: 'LOW',
+                riskExplanation: '',
+                riskRecommendation: '',
+                showInfographicModal: false,
+                showVideoModal: false,
+                showToast: false,
+                toastTitle: '',
+                toastMessage: '',
+
+                init() {
+                    lucide.createIcons();
+                    this.$watch('userPrompt', (val) => this.analyzePrompt(val));
+                },
+
+                toggleDarkMode() {
+                    this.darkMode = !this.darkMode;
+                    if (this.darkMode) {
+                        document.documentElement.classList.add('dark');
+                    } else {
+                        document.documentElement.classList.remove('dark');
+                    }
+                },
+
+                openInfographicModal() {
+                    this.showInfographicModal = true;
+                    this.$nextTick(() => lucide.createIcons());
+                },
+
+                openVideoModal() {
+                    this.showVideoModal = true;
+                    this.$nextTick(() => {
+                        lucide.createIcons();
+                        const video = this.$refs.guideVideo;
+                        if (video) {
+                            video.currentTime = 0;
+                            video.play().catch(() => {});
+                        }
+                    });
+                },
+
+                closeVideoModal() {
+                    this.showVideoModal = false;
+                    const video = this.$refs.guideVideo;
+                    if (video) {
+                        video.pause();
+                    }
+                },
+
+                downloadPresentation() {
+                    this.toastTitle = "발표 자료 다운로드 시작";
+                    this.toastMessage = "presentation.pdf 파일 다운로드가 시작됩니다.";
+                    this.showToast = true;
+                    this.$nextTick(() => lucide.createIcons());
+                    
+                    // Trigger presentation.pdf download
+                    const element = document.createElement("a");
+                    element.href = "presentation.pdf";
+                    element.download = "presentation.pdf";
+                    document.body.appendChild(element);
+                    element.click();
+                    document.body.removeChild(element);
+
+                    setTimeout(() => {
+                        this.showToast = false;
+                    }, 4000);
+                },
+
+                setPrompt(type) {
+                    if (type === 'movie') {
+                        this.userPrompt = "영화 '기생충'의 마지막 결말 장면 구도와 스토리를 변형해서 원작 분위기 그대로 렌더링해 줘.";
+                    } else if (type === 'character') {
+                        this.userPrompt = "뽀로로 캐릭터와 똑같이 생긴 펭귄이 파랑 옷을 입고 나는 모습을 그려줘.";
+                    } else if (type === 'safe1') {
+                        this.userPrompt = "작은 키, 동그란 얼굴, 빨간 헬멧과 고글을 착용한 귀여운 아기 펭귄 캐릭터를 그려줘.";
+                    }
+                },
+
+                analyzePrompt(prompt) {
+                    const text = prompt.toLowerCase();
+                    const highRiskKeywords = ['영화', '뽀로로', '기생충', '똑같이', '원작', '캐릭터명', '작가', '피카소', '디즈니', '마블'];
+                    
+                    const isHigh = highRiskKeywords.some(kw => text.includes(kw));
+
+                    if (isHigh) {
+                        this.analyzedRisk = 'HIGH';
+                        this.riskExplanation = "특정 기존 저작물(작품명, 캐릭터명, 감독/작가 등)을 직접 지시하거나 명시하여 '의거성'이 매우 강하게 추정됩니다. 결과물이 기존 표현과 유사할 경우 저작권 침해 판정을 받을 위험이 극히 높습니다.";
+                        this.riskRecommendation = "고유명사나 특정 작품명을 삭제하고, 고유한 스타일 및 일반적인 형용사/묘사어 위주로 프롬프트 클렌징을 실시하세요.";
+                    } else {
+                        this.analyzedRisk = 'LOW';
+                        this.riskExplanation = "일반적이고 구체적인 스타일/외형 묘사만 포함되어 특정 작품을 직접 타깃팅하지 않습니다. 우연히 타 작품과 유사하더라도 '의거성 미달'로 저작권 침해 방어가 용이합니다.";
+                        this.riskRecommendation = "현재 프롬프트 형태를 유지하시고, 생성된 결과물의 상업적 사용 전 시각적 유사성(표절검사)만 추가 검증하세요.";
+                    }
+
+                    this.$nextTick(() => lucide.createIcons());
+                }
+            }
+        }
+
+        function quizData() {
+            return {
+                currentStep: 0,
+                score: 0,
+                answered: false,
+                selectedAnswer: null,
+                questions: [
+                    {
+                        question: "미국 연방대법원의 Thaler v. Perlmutter 판결에 따른 핵심 결론은 무엇인가요?",
+                        options: [
+                            "1. AI가 생성한 작품도 저작권을 인정받는다.",
+                            "2. 인간의 창작적 개입이 없는 AI 산출물은 저작권 보호 대상에서 제외된다.",
+                            "3. AI 개발자가 자동으로 저작권을 소유한다."
+                        ],
+                        answer: 1,
+                        explanation: "2023년 판결에 따라 저작권법상 보호받기 위해서는 '인간의 창작적 개입(Human Authorship)'이 필수적입니다."
+                    },
+                    {
+                        question: "저작권 침해가 성립하기 위해 필요한 2가지 핵심 요건은 무엇인가요?",
+                        options: [
+                            "1. 아이디어 유사성 + 상업적 목적",
+                            "2. 의거성 + 실질적 유사성",
+                            "3. 프롬프트 길이 + 사용 시간"
+                        ],
+                        answer: 1,
+                        explanation: "특정 저작물을 인식하고 이용했는지 판단하는 '의거성'과 보호받는 표현이 유사한지 판단하는 '실질적 유사성'이 모두 충족되어야 합니다."
+                    },
+                    {
+                        question: "원저작권자가 자신의 저작물이 AI 학습 데이터에 포함되지 않도록 하는 방어 전략은?",
+                        options: [
+                            "1. robots.txt를 통한 크롤링 차단 및 Opt-out 요청",
+                            "2. AI 이용자에게 직접 메일 발송",
+                            "3. 저작물 가격 인상"
+                        ],
+                        answer: 0,
+                        explanation: "로봇 배제 표준(robots.txt) 설정, 메타데이터 RMI 삽입, Opt-out 데이터베이스 등록 등이 기술적 방어 수단입니다."
+                    }
+                ],
+
+                selectAnswer(idx) {
+                    if (this.answered) return;
+                    this.selectedAnswer = idx;
+                    this.answered = true;
+                    if (idx === this.questions[this.currentStep].answer) {
+                        this.score += 33;
+                    }
+                },
+
+                getOptionClass(idx) {
+                    if (!this.answered) return 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 hover:bg-slate-100';
+                    if (idx === this.questions[this.currentStep].answer) {
+                        return 'bg-emerald-100 dark:bg-emerald-950/60 border-emerald-500 text-emerald-900 dark:text-emerald-200 font-bold';
+                    }
+                    if (idx === this.selectedAnswer) {
+                        return 'bg-red-100 dark:bg-red-950/60 border-red-500 text-red-900 dark:text-red-200';
+                    }
+                    return 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 opacity-50';
+                },
+
+                nextQuestion() {
+                    if (this.currentStep + 1 < this.questions.length) {
+                        this.currentStep++;
+                        this.answered = false;
+                        this.selectedAnswer = null;
+                    } else {
+                        this.currentStep = 0;
+                        this.score = 0;
+                        this.answered = false;
+                        this.selectedAnswer = null;
+                    }
+                    this.$nextTick(() => lucide.createIcons());
+                }
+            }
+        }
+    </script>
+</body>
+</html>
