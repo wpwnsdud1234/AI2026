@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4년제 대학교 vs 전문대학교 첨단기술 학과 비교 분석 보고서</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts: Noto Sans KR -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            500: '#2563eb',
+                            600: '#1d4ed8',
+                            700: '#1e40af',
+                            800: '#1e3a8a',
+                            900: '#0f172a',
+                        },
+                        univ: {
+                            bg: '#eff6ff',
+                            border: '#bfdbfe',
+                            text: '#1e40af',
+                            badge: '#3b82f6'
+                        },
+                        junior: {
+                            bg: '#ecfdf5',
+                            border: '#a7f3d0',
+                            text: '#065f46',
+                            badge: '#10b981'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Noto Sans KR', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: #f8fafc; }
+        .tab-btn.active {
+            border-bottom: 3px solid #2563eb;
+            color: #2563eb;
+            font-weight: 700;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="text-slate-800 antialiased selection:bg-brand-500 selection:text-white">
+
+    <!-- Header / Navbar -->
+    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-3">
+                    <!-- Home Button -->
+                    <a href="../index.html" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl transition-colors flex items-center gap-1.5 text-xs font-semibold border border-slate-200" title="메인 홈으로 이동">
+                        <i class="fa-solid fa-house text-sm text-brand-600"></i>
+                        <span class="hidden sm:inline">홈</span>
+                    </a>
+                    <div class="p-2 bg-brand-500 text-white rounded-xl shadow-md">
+                        <i class="fa-solid fa-scale-balanced text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-bold text-slate-900 leading-tight sm:text-xl">
+                            4년제 대학교 vs 전문대학교 첨단기술 학과 비교 분석 보고서
+                        </h1>
+                        <p class="text-xs text-slate-500">응용소프트웨어 및 첨단 융합 기술 교육 체계 종합 비교</p>
+                    </div>
+                </div>
+                <div class="hidden md:flex items-center space-x-3">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">
+                        <i class="fa-solid fa-code-compare mr-1.5"></i> 대학교 vs 전문대 비교 특화
+                    </span>
+                    <button onclick="window.print()" class="px-3 py-1.5 text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors flex items-center gap-1.5">
+                        <i class="fa-solid fa-print"></i> 인쇄 / PDF Save
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+        <!-- Executive Summary Banner -->
+        <section class="bg-gradient-to-br from-slate-900 via-brand-900 to-indigo-950 text-white rounded-2xl p-6 md:p-8 shadow-xl relative overflow-hidden">
+            <div class="absolute -right-10 -bottom-10 w-80 h-80 bg-brand-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="relative z-10 space-y-4">
+                <div class="flex items-center space-x-2 text-brand-100 font-semibold text-sm">
+                    <span class="bg-brand-500 text-white text-xs px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider">Executive Summary</span>
+                    <span>1. 요약: 대학교 vs 전문대 핵심 차이점</span>
+                </div>
+                <h2 class="text-2xl md:text-3xl font-extrabold tracking-tight">
+                    학이론·신산업 융합(4년제) vs 실무·직무 밀착(전문대)의 양대 교육 축
+                </h2>
+                <p class="text-slate-300 text-sm md:text-base leading-relaxed max-w-4xl">
+                    본 보고서는 국내 4년제 대학교와 전문대학교의 응용소프트웨어 및 첨단기술 학과 운영 구조를 다각도로 비교·분석합니다. 
+                    <strong>4년제 대학교</strong>는 AI, 자율주행, 반도체 등 연구 중심 및 채용조건형 계약학과 위주로 개편 중이며, 
+                    <strong>전문대학교</strong>는 웹·앱 실무, XR/메타버스, 학사학위 전공심화 및 산업체 위탁 교육을 통해 즉시 현장 투입 가능한 인재를 양성하고 있습니다.
+                </p>
+
+                <!-- Comparison Quick Metric Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-slate-700/60">
+                    <div class="bg-blue-950/60 border border-blue-500/30 rounded-xl p-4 flex items-start gap-3">
+                        <div class="p-2.5 bg-blue-600/30 text-blue-300 rounded-lg shrink-0">
+                            <i class="fa-solid fa-university text-xl"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-wider text-blue-400">4년제 대학교 핵심 특성</span>
+                            <h3 class="text-lg font-bold text-white mt-0.5">신산업 연구 & 핵심 알고리즘 융합</h3>
+                            <p class="text-xs text-slate-300 mt-1 leading-relaxed">
+                                AI·빅데이터, 자율주행 모빌리티, 시스템 반도체, 디지털 헬스케어 등 첨단 분야 학술·연구 중심 / 채용조건형 계약학과 활발 (성균관대, 가천대 등)
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="bg-emerald-950/60 border border-emerald-500/30 rounded-xl p-4 flex items-start gap-3">
+                        <div class="p-2.5 bg-emerald-600/30 text-emerald-300 rounded-lg shrink-0">
+                            <i class="fa-solid fa-wrench text-xl"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-wider text-emerald-400">전문대학교 핵심 특성</span>
+                            <h3 class="text-lg font-bold text-white mt-0.5">실무 직무 밀착 & 학업 연속성 (전공심화)</h3>
+                            <p class="text-xs text-slate-300 mt-1 leading-relaxed">
+                                웹/응용 SW, 메타버스 콘텐츠, 실무 프로그래밍 중심 / 3+1 전공심화 과정으로 학사학위 취득 기회 제공 & 산업체 위탁 교육 (동양미래대, 경복대 등)
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Navigation Section Tabs -->
+        <div class="flex border-b border-slate-200 overflow-x-auto bg-white rounded-xl p-1 shadow-sm gap-2">
+            <button onclick="switchTab('sec-comparison')" id="tab-sec-comparison" class="tab-btn px-4 py-2.5 text-sm font-medium text-slate-600 hover:text-brand-600 transition-all whitespace-nowrap active">
+                <i class="fa-solid fa-code-compare mr-1.5"></i>1:1 직관적 비교 분석
+            </button>
+            <button onclick="switchTab('sec-depts')" id="tab-sec-depts" class="tab-btn px-4 py-2.5 text-sm font-medium text-slate-600 hover:text-brand-600 transition-all whitespace-nowrap">
+                <i class="fa-solid fa-chart-pie mr-1.5"></i>유형별 학과 & 분야 분포
+            </button>
+            <button onclick="switchTab('sec-distance')" id="tab-sec-distance" class="tab-btn px-4 py-2.5 text-sm font-medium text-slate-600 hover:text-brand-600 transition-all whitespace-nowrap">
+                <i class="fa-solid fa-graduation-cap mr-1.5"></i>원격/사이버대 및 진학 비교
+            </button>
+            <button onclick="switchTab('sec-explorer')" id="tab-sec-explorer" class="tab-btn px-4 py-2.5 text-sm font-medium text-slate-600 hover:text-brand-600 transition-all whitespace-nowrap">
+                <i class="fa-solid fa-table-list mr-1.5"></i>대학·학과 데이터 통합 비교기
+            </button>
+        </div>
+
+        <!-- Section 1: Direct 1:1 Comparison Matrix -->
+        <div id="sec-comparison" class="tab-content space-y-6">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
+                <div>
+                    <h3 class="text-xl font-bold text-slate-900">2. 4년제 대학교 vs 전문대학교 1:1 세부 비교</h3>
+                    <p class="text-sm text-slate-500">교육 목표, 특성화 분야, 학위 및 산학 협력 모델 체계 비교</p>
+                </div>
+            </div>
+
+            <!-- Side by Side Feature Comparison Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- 4-Year University Card -->
+                <div class="bg-white rounded-2xl border-2 border-blue-200 p-6 shadow-sm space-y-5 relative">
+                    <div class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800">
+                        <i class="fa-solid fa-graduation-cap mr-1.5"></i> 4년제 대학교 (4-Year Universities)
+                    </div>
+                    <h4 class="text-xl font-bold text-slate-900">신기술 이론, 연구 및 산업 융합 중심</h4>
+                    
+                    <ul class="space-y-3.5 text-xs md:text-sm text-slate-600">
+                        <li class="flex items-start gap-2.5">
+                            <i class="fa-solid fa-circle-check text-blue-600 mt-1 shrink-0"></i>
+                            <div>
+                                <strong class="text-slate-900 font-semibold block">교육 목표 및 방향</strong>
+                                컴퓨팅 사고력, 알고리즘, 인공지능 원리 등 기초 이론 및 원천 기술 및 학술 연구 강화
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-2.5">
+                            <i class="fa-solid fa-circle-check text-blue-600 mt-1 shrink-0"></i>
+                            <div>
+                                <strong class="text-slate-900 font-semibold block">주요 첨단 특성화 분야</strong>
+                                AI·빅데이터(경기대, 인하대), 미래모빌리티(조선대, 고려대 세종), AI반도체(한경국립대), 디지털헬스케어(연세대 미래)
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-2.5">
+                            <i class="fa-solid fa-circle-check text-blue-600 mt-1 shrink-0"></i>
+                            <div>
+                                <strong class="text-slate-900 font-semibold block">학위 및 진로 모델</strong>
+                                공학학사 학위 취득 / 대학원 석·박사 진학 및 R&D 연구원, 대기업/글로벌 개발자 진출
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-2.5">
+                            <i class="fa-solid fa-circle-check text-blue-600 mt-1 shrink-0"></i>
+                            <div>
+                                <strong class="text-slate-900 font-semibold block">산학협력 대표 형태 (계약학과)</strong>
+                                대기업 채용조건형 계약학과 활성화 (예: 성균관대 지능형소프트웨어학과 - 삼성전자 연계)
+                            </div>
+                        </li>
+                    </ul>
+
+                    <div class="p-3.5 bg-blue-50/70 border border-blue-100 rounded-xl text-xs text-blue-900">
+                        <strong> 대표 대학 및 학과 사례:</strong><br>
+                        • 경기대 AI·빅데이터학과 | 인하대 데이터사이언스학과<br>
+                        • 고려대(세종) 미래모빌리티학과 | 가천대 인공지능학과
+                    </div>
+                </div>
+
+                <!-- Junior College Card -->
+                <div class="bg-white rounded-2xl border-2 border-emerald-200 p-6 shadow-sm space-y-5 relative">
+                    <div class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">
+                        <i class="fa-solid fa-laptop-code mr-1.5"></i> 전문대학교 (Junior Colleges)
+                    </div>
+                    <h4 class="text-xl font-bold text-slate-900">현장 직무 밀착, 실기 및 전공심화 중심</h4>
+                    
+                    <ul class="space-y-3.5 text-xs md:text-sm text-slate-600">
+                        <li class="flex items-start gap-2.5">
+                            <i class="fa-solid fa-circle-check text-emerald-600 mt-1 shrink-0"></i>
+                            <div>
+                                <strong class="text-slate-900 font-semibold block">교육 목표 및 방향</strong>
+                                실무 프레임워크 활용, 웹/앱 개발, 콘텐츠 제작 등 졸업 직후 현장 투입 가능한 직무 실무 역량
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-2.5">
+                            <i class="fa-solid fa-circle-check text-emerald-600 mt-1 shrink-0"></i>
+                            <div>
+                                <strong class="text-slate-900 font-semibold block">주요 첨단 특성화 분야</strong>
+                                웹응용소프트웨어(동양미래대), 컴퓨터소프트웨어(인덕대), 메타버스 크리에이터(수성대), IT콘텐츠융합(한양여대)
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-2.5">
+                            <i class="fa-solid fa-circle-check text-emerald-600 mt-1 shrink-0"></i>
+                            <div>
+                                <strong class="text-slate-900 font-semibold block">학위 및 진로 모델 (전공심화)</strong>
+                                전문학사 취득(2~3년) + <strong>학사학위 전공심화과정(1~2년)</strong>을 통한 4년제 학사학위 동일 취득 체계
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-2.5">
+                            <i class="fa-solid fa-circle-check text-emerald-600 mt-1 shrink-0"></i>
+                            <div>
+                                <strong class="text-slate-900 font-semibold block">산학협력 대표 형태 (위탁 교육)</strong>
+                                재직자 및 산업체 위탁교육과정 운영 (예: 경민대 게임콘텐츠과 산업체위탁)
+                            </div>
+                        </li>
+                    </ul>
+
+                    <div class="p-3.5 bg-emerald-50/70 border border-emerald-100 rounded-xl text-xs text-emerald-900">
+                        <strong> 대표 대학 및 학과 사례:</strong><br>
+                        • 동양미래대 웹응용소프트웨어공학과 (전공심화 운영)<br>
+                        • 수성대 메타버스크리에이터과 | 한양여대 IT콘텐츠융합과
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comparison Breakdown Table Matrix -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="p-5 border-b border-slate-200 bg-slate-50/80 flex justify-between items-center">
+                    <h4 class="font-bold text-slate-900 text-sm md:text-base">
+                        <i class="fa-solid fa-table-columns mr-2 text-brand-500"></i>대학교 vs 전문대학교 항목별 핵심 비교표
+                    </h4>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-xs md:text-sm text-left text-slate-600">
+                        <thead class="text-xs text-slate-700 uppercase bg-slate-100/80 border-b border-slate-200">
+                            <tr>
+                                <th scope="col" class="px-4 py-3 w-1/5">비교 구분</th>
+                                <th scope="col" class="px-4 py-3 w-2/5 text-blue-900 bg-blue-50/50">4년제 대학교</th>
+                                <th scope="col" class="px-4 py-3 w-2/5 text-emerald-900 bg-emerald-50/50">전문대학교</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            <tr class="hover:bg-slate-50">
+                                <td class="px-4 py-3 font-bold text-slate-800">수학 연한 & 학위</td>
+                                <td class="px-4 py-3 text-slate-700">4년 (공학학사 취득)</td>
+                                <td class="px-4 py-3 text-slate-700">2~3년 (전문학사) + <span class="font-semibold text-emerald-700">전공심화 1~2년 (학사 취득 가능)</span></td>
+                            </tr>
+                            <tr class="hover:bg-slate-50">
+                                <td class="px-4 py-3 font-bold text-slate-800">교육 중점</td>
+                                <td class="px-4 py-3 text-slate-700">알고리즘, 이론, 원천 기술 개발 및 연구 능률</td>
+                                <td class="px-4 py-3 text-slate-700">실무 코드 작성, 프레임워크 응용, 산업 현장 즉시 투입력</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50">
+                                <td class="px-4 py-3 font-bold text-slate-800">주요 신설·융합 분야</td>
+                                <td class="px-4 py-3 text-slate-700">AI·빅데이터, 자율주행 모빌리티, AI반도체, 디지털헬스케어</td>
+                                <td class="px-4 py-3 text-slate-700">웹/앱 응용 SW, 메타버스 콘텐츠, XR·게임 실무, 미디어 IT</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50">
+                                <td class="px-4 py-3 font-bold text-slate-800">대표 산학 연계 방식</td>
+                                <td class="px-4 py-3 text-slate-700 font-semibold text-blue-700">채용조건형 계약학과 (삼성, 현대 등 연계)</td>
+                                <td class="px-4 py-3 text-slate-700 font-semibold text-emerald-700">산업체 위탁 교육 및 학사학위 전공심화과정</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50">
+                                <td class="px-4 py-3 font-bold text-slate-800">졸업 후 진로 특성</td>
+                                <td class="px-4 py-3 text-slate-700">국내외 대학원 진학, R&D 연구원, 대기업/IT 대형 솔루션사</td>
+                                <td class="px-4 py-3 text-slate-700">IT 전문 프론트/백엔드 개발사, SI/SM 기업, 전공심화 학사 취득</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 2: Department Breakdown & Sector Distribution -->
+        <div id="sec-depts" class="tab-content hidden space-y-6">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <h3 class="text-xl font-bold text-slate-900">3. 첨단기술 융합 분야별 대학 유형비교</h3>
+                    <p class="text-sm text-slate-500">4년제 대학교와 전문대학교의 분야별 비중 및 특성화 차이</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Comparative Chart: 4-Year vs Junior College Focus -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 lg:col-span-7 flex flex-col justify-between">
+                    <div>
+                        <h4 class="font-bold text-slate-900 text-base mb-1">분야별 4년제 vs 전문대 개설 비중 비교</h4>
+                        <p class="text-xs text-slate-500 mb-4">학문 중심 융합(4년제)과 실무 응용(전문대) 분야 분포</p>
+                        <div class="relative h-64">
+                            <canvas id="typeComparisonChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="mt-4 p-3 bg-slate-50 rounded-xl border border-slate-100 text-xs text-slate-600">
+                        <i class="fa-solid fa-lightbulb text-amber-500 mr-1"></i>
+                        <strong>핵심 인사이트:</strong> 4년제 대학교는 AI·빅데이터 및 모빌리티 분야 개설 비율이 높으며, 전문대학교는 웹응용 SW 및 XR/메타버스 실무 교육에 높은 비중을 두고 있습니다.
+                    </div>
+                </div>
+
+                <!-- Specialized Education Models Box -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 lg:col-span-5 space-y-4">
+                    <h4 class="font-bold text-slate-900 text-base">유형별 대표 특화 교육 모델</h4>
+
+                    <!-- 4-Year Contract Dept Model -->
+                    <div class="p-4 bg-blue-50/80 border border-blue-200 rounded-xl space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-blue-900">4년제 대학교 대표 모델</span>
+                            <span class="px-2 py-0.5 text-xs rounded bg-blue-200 text-blue-800 font-bold">채용조건형 계약학과</span>
+                        </div>
+                        <p class="text-xs text-slate-700 leading-relaxed">
+                            기업과의 협약을 통해 등록금 지원 및 졸업 후 채용을 보장하는 최첨단 교육 트랙.
+                        </p>
+                        <div class="text-xs text-blue-800 font-medium pt-1">
+                            • 成均館大 지능형소프트웨어학과 (삼성전자 연계)<br>
+                            • 가천대 게임·영상학과 (기업 연계 트랙)
+                        </div>
+                    </div>
+
+                    <!-- Junior College Advanced Track Model -->
+                    <div class="p-4 bg-emerald-50/80 border border-emerald-200 rounded-xl space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-emerald-900">전문대학교 대표 모델</span>
+                            <span class="px-2 py-0.5 text-xs rounded bg-emerald-200 text-emerald-800 font-bold">학사학위 전공심화 / 위탁</span>
+                        </div>
+                        <p class="text-xs text-slate-700 leading-relaxed">
+                            2~3년 전문학사 취득 후 1~2년 연속 교육을 통해 일반 4년제와 동등한 학사학위를 제공하는 제도.
+                        </p>
+                        <div class="text-xs text-emerald-800 font-medium pt-1">
+                            • 동양미래대 웹응용소프트웨어공학과 (전공심화)<br>
+                            • 경민대 게임콘텐츠과 (산업체 위탁)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 3: Cyber Universities & Higher Education Advancement -->
+        <div id="sec-distance" class="tab-content hidden space-y-6">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
+                <div>
+                    <h3 class="text-xl font-bold text-slate-900">4. 사이버·방송통신대학 상급 학교 진학 현황</h3>
+                    <p class="text-sm text-slate-500">원격 교육 기관의 졸업 후 대학원 및 4년제 대학교 진학 데이터 분석</p>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Bar Chart: Graduation vs Advancement -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 lg:col-span-8 flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-center mb-4">
+                            <h4 class="font-bold text-slate-900 text-base">주요 원격대학 학과 졸업 및 진학자 비교 (2023)</h4>
+                            <span class="text-xs text-slate-400">단위: 명</span>
+                        </div>
+                        <div class="relative h-64">
+                            <canvas id="distanceUniChart"></canvas>
+                        </div>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-3 bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+                        <i class="fa-solid fa-circle-info text-brand-500 mr-1"></i>
+                        한국방송통신대 컴퓨터과학과는 730명 졸업자 중 20명이 상급 진학을 선택했으며, 고려사이버대 SW공학과는 7.5%로 최상위 진학률을 나타냈습니다.
+                    </p>
+                </div>
+
+                <!-- Advancement Donut / Highlights -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 lg:col-span-4 space-y-4">
+                    <h4 class="font-bold text-slate-900 text-base">원격대학 진학률 순위</h4>
+                    <div class="relative h-44 flex items-center justify-center">
+                        <canvas id="advancementRateChart"></canvas>
+                    </div>
+                    <div class="space-y-2 text-xs">
+                        <div class="p-2.5 bg-blue-50 border border-blue-100 rounded-lg flex justify-between items-center">
+                            <span>1위 고려사이버대 SW공학과</span>
+                            <span class="font-bold text-blue-700">7.5%</span>
+                        </div>
+                        <div class="p-2.5 bg-purple-50 border border-purple-100 rounded-lg flex justify-between items-center">
+                            <span>2위 서울사이버대 기계제어</span>
+                            <span class="font-bold text-purple-700">6.1%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 4: Searchable Data Explorer Table -->
+        <div id="sec-explorer" class="tab-content hidden space-y-4">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                <div>
+                    <h3 class="text-xl font-bold text-slate-900">5. 대학 유형별 학과 종합 비교 탐색기</h3>
+                    <p class="text-sm text-slate-500">4년제, 전문대, 사이버대의 학과명, 특성 및 교육 과정을 비교 탐색하세요.</p>
+                </div>
+
+                <!-- Search Input & Filters -->
+                <div class="flex flex-col sm:flex-row items-center gap-2 w-full md:w-auto">
+                    <div class="relative w-full sm:w-64">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                        <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="대학명 또는 학과명 검색..." 
+                            class="w-full pl-9 pr-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all">
+                    </div>
+                    <select id="typeFilter" onchange="filterTable()" class="w-full sm:w-auto px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500 font-medium">
+                        <option value="">구분 전체</option>
+                        <option value="4년제">4년제 대학교</option>
+                        <option value="전문대">전문대학교</option>
+                        <option value="사이버/방통대">사이버/방통대</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Comprehensive Table -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-xs md:text-sm text-left text-slate-600" id="explorerTable">
+                        <thead class="text-xs text-slate-700 uppercase bg-slate-100/80 border-b border-slate-200">
+                            <tr>
+                                <th scope="col" class="px-4 py-3">대학 구분</th>
+                                <th scope="col" class="px-4 py-3">학교명</th>
+                                <th scope="col" class="px-4 py-3">학과/전공명</th>
+                                <th scope="col" class="px-4 py-3">핵심 특성화 분야</th>
+                                <th scope="col" class="px-4 py-3">교육 과정 / 학위 트랙</th>
+                                <th scope="col" class="px-4 py-3">4년제 vs 전문대 특성 요약</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            <!-- 4년제 Rows -->
+                            <tr class="table-row hover:bg-slate-50" data-type="4년제">
+                                <td class="px-4 py-3"><span class="px-2.5 py-0.5 rounded text-xs bg-blue-100 text-blue-800 font-bold">4년제</span></td>
+                                <td class="px-4 py-3 font-semibold text-slate-900">경기대학교</td>
+                                <td class="px-4 py-3 font-medium text-brand-600">AI·빅데이터학과</td>
+                                <td class="px-4 py-3"><span class="px-2 py-0.5 rounded bg-purple-50 text-purple-700 border border-purple-200">AI & 데이터</span></td>
+                                <td class="px-4 py-3">4년 정규 학사</td>
+                                <td class="px-4 py-3 text-slate-500">이론 알고리즘 및 빅데이터 연구 중심</td>
+                            </tr>
+                            <tr class="table-row hover:bg-slate-50" data-type="4년제">
+                                <td class="px-4 py-3"><span class="px-2.5 py-0.5 rounded text-xs bg-blue-100 text-blue-800 font-bold">4년제</span></td>
+                                <td class="px-4 py-3 font-semibold text-slate-900">성균관대학교</td>
+                                <td class="px-4 py-3 font-medium text-brand-600">지능형소프트웨어학과</td>
+                                <td class="px-4 py-3"><span class="px-2 py-0.5 rounded bg-purple-50 text-purple-700 border border-purple-200">AI & SW</span></td>
+                                <td class="px-4 py-3 font-semibold text-blue-700">채용조건형 계약학과</td>
+                                <td class="px-4 py-3 text-slate-500">삼성전자 연계, 졸업 후 채용 보장</td>
+                            </tr>
+                            <tr class="table-row hover:bg-slate-50" data-type="4년제">
+                                <td class="px-4 py-3"><span class="px-2.5 py-0.5 rounded text-xs bg-blue-100 text-blue-800 font-bold">4년제</span></td>
+                                <td class="px-4 py-3 font-semibold text-slate-900">조선대학교</td>
+                                <td class="px-4 py-3 font-medium text-brand-600">모빌리티SW학과</td>
+                                <td class="px-4 py-3"><span class="px-2 py-0.5 rounded bg-cyan-50 text-cyan-700 border border-cyan-200">모빌리티</span></td>
+                                <td class="px-4 py-3">4년 정규 학사</td>
+                                <td class="px-4 py-3 text-slate-500">자율주행 및 미래 자동차 SW 융합</td>
+                            </tr>
+                            <tr class="table-row hover:bg-slate-50" data-type="4년제">
+                                <td class="px-4 py-3"><span class="px-2.5 py-0.5 rounded text-xs bg-blue-100 text-blue-800 font-bold">4년제</span></td>
+                                <td class="px-4 py-3 font-semibold text-slate-900">연세대학교 (미래)</td>
+                                <td class="px-4 py-3 font-medium text-brand-600">디지털헬스케어학부</td>
+                                <td class="px-4 py-3"><span class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">헬스케어</span></td>
+                                <td class="px-4 py-3">4년 정규 학사</td>
+                                <td class="px-4 py-3 text-slate-500">의료 빅데이터 및 디지털 헬스 R&D</td>
+                            </tr>
+
+                            <!-- 전문대 Rows -->
+                            <tr class="table-row hover:bg-slate-50" data-type="전문대">
+                                <td class="px-4 py-3"><span class="px-2.5 py-0.5 rounded text-xs bg-emerald-100 text-emerald-800 font-bold">전문대</span></td>
+                                <td class="px-4 py-3 font-semibold text-slate-900">동양미래대학교</td>
+                                <td class="px-4 py-3 font-medium text-emerald-700">웹응용소프트웨어공학</td>
+                                <td class="px-4 py-3"><span class="px-2 py-0.5 rounded bg-slate-100 text-slate-700">웹/응용 SW</span></td>
+                                <td class="px-4 py-3 font-semibold text-emerald-700">전문학사 + 전공심화 학사</td>
+                                <td class="px-4 py-3 text-slate-500">직무 밀착 실무 개발 및 4년제 학사 연계</td>
+                            </tr>
+                            <tr class="table-row hover:bg-slate-50" data-type="전문대">
+                                <td class="px-4 py-3"><span class="px-2.5 py-0.5 rounded text-xs bg-emerald-100 text-emerald-800 font-bold">전문대</span></td>
+                                <td class="px-4 py-3 font-semibold text-slate-900">수성대학교</td>
+                                <td class="px-4 py-3 font-medium text-emerald-700">메타버스크리에이터과</td>
+                                <td class="px-4 py-3"><span class="px-2 py-0.5 rounded bg-pink-50 text-pink-700 border border-pink-200">XR/메타버스</span></td>
+                                <td class="px-4 py-3">2~3년 전문학사</td>
+                                <td class="px-4 py-3 text-slate-500">메타버스 콘텐츠 제작 현장 실무 교육</td>
+                            </tr>
+                            <tr class="table-row hover:bg-slate-50" data-type="전문대">
+                                <td class="px-4 py-3"><span class="px-2.5 py-0.5 rounded text-xs bg-emerald-100 text-emerald-800 font-bold">전문대</span></td>
+                                <td class="px-4 py-3 font-semibold text-slate-900">경민대학교</td>
+                                <td class="px-4 py-3 font-medium text-emerald-700">게임콘텐츠과</td>
+                                <td class="px-4 py-3"><span class="px-2 py-0.5 rounded bg-pink-50 text-pink-700 border border-pink-200">게임/콘텐츠</span></td>
+                                <td class="px-4 py-3 font-semibold text-slate-700">산업체 위탁 과정</td>
+                                <td class="px-4 py-3 text-slate-500">재직자 대상 직무 능력 향상 트랙</td>
+                            </tr>
+
+                            <!-- 사이버/방통대 Rows -->
+                            <tr class="table-row hover:bg-slate-50" data-type="사이버/방통대">
+                                <td class="px-4 py-3"><span class="px-2.5 py-0.5 rounded text-xs bg-amber-100 text-amber-800 font-bold">사이버/방통대</span></td>
+                                <td class="px-4 py-3 font-semibold text-slate-900">고려사이버대학교</td>
+                                <td class="px-4 py-3 font-medium text-amber-700">소프트웨어공학과</td>
+                                <td class="px-4 py-3"><span class="px-2 py-0.5 rounded bg-blue-50 text-blue-700">SW공학</span></td>
+                                <td class="px-4 py-3">원격 학사</td>
+                                <td class="px-4 py-3 text-slate-500">진학률 7.5% (대학원 진학 위주 징검다리)</td>
+                            </tr>
+                            <tr class="table-row hover:bg-slate-50" data-type="사이버/방통대">
+                                <td class="px-4 py-3"><span class="px-2.5 py-0.5 rounded text-xs bg-amber-100 text-amber-800 font-bold">사이버/방통대</span></td>
+                                <td class="px-4 py-3 font-semibold text-slate-900">한국방송통신대학교</td>
+                                <td class="px-4 py-3 font-medium text-amber-700">컴퓨터과학과</td>
+                                <td class="px-4 py-3"><span class="px-2 py-0.5 rounded bg-blue-50 text-blue-700">컴퓨터과학</span></td>
+                                <td class="px-4 py-3">국립 원격 학사</td>
+                                <td class="px-4 py-3 text-slate-500">730명 최다 졸업생 배출, 20명 상급 진학</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 5: Conclusion -->
+        <section class="bg-white p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+            <div class="flex items-center space-x-3 text-brand-600 font-bold">
+                <div class="p-2 bg-brand-50 rounded-lg">
+                    <i class="fa-solid fa-flag text-lg"></i>
+                </div>
+                <h3 class="text-xl font-bold text-slate-900">6. 종합 결론: 대학교 및 전문대의 상호보완적 발전 방향</h3>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 text-xs md:text-sm text-slate-600 leading-relaxed">
+                <div class="p-4 bg-blue-50/60 rounded-xl border border-blue-100">
+                    <h4 class="font-bold text-blue-900 text-sm mb-1.5"><i class="fa-solid fa-university mr-1.5"></i>4년제 대학교의 미래 비전</h4>
+                    <p>
+                        연구 역량 강화와 첨단 핵심 산업(AI, 모빌리티, 반도체) 연계를 고도화하여, 채용조건형 계약학과 및 산학 연구 중심 학부 구조 개편 지속.
+                    </p>
+                </div>
+                <div class="p-4 bg-emerald-50/60 rounded-xl border border-emerald-100">
+                    <h4 class="font-bold text-emerald-900 text-sm mb-1.5"><i class="fa-solid fa-screwdriver-wrench mr-1.5"></i>전문대학교의 미래 비전</h4>
+                    <p>
+                        현장 실무 및 최신 프레임워크 기반 교육을 유지하면서, 학사학위 전공심화 과정 및 산업체 위탁 교육을 확대하여 평생 직업 교육 기관 역할 강화.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 text-xs py-8 border-t border-slate-800 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div>
+                <p class="font-semibold text-slate-300">4년제 대학교 vs 전문대학교 첨단기술 학과 비교 분석 보고서</p>
+                <p class="mt-1 text-slate-500">2022-2023 대학/전문대 응용소프트웨어 현황 비교 데이터</p>
+            </div>
+            <div class="text-slate-500">
+                &copy; 2026 Interactive Tertiary Education Comparison Dashboard.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Tab Switcher
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(el => {
+                el.classList.remove('active', 'border-brand-600', 'text-brand-600', 'font-bold');
+                el.classList.add('text-slate-600');
+            });
+
+            document.getElementById(tabId).classList.remove('hidden');
+            const activeBtn = document.getElementById('tab-' + tabId);
+            activeBtn.classList.add('active');
+        }
+
+        // Table Filter Function
+        function filterTable() {
+            const searchVal = document.getElementById('searchInput').value.toLowerCase();
+            const typeVal = document.getElementById('typeFilter').value;
+            const rows = document.querySelectorAll('#explorerTable tbody tr');
+
+            rows.forEach(row => {
+                const text = row.innerText.toLowerCase();
+                const type = row.getAttribute('data-type');
+
+                const matchesSearch = text.includes(searchVal);
+                const matchesType = !typeVal || type === typeVal;
+
+                if (matchesSearch && matchesType) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        window.onload = function() {
+            // Chart 1: Grouped Bar Chart comparing 4-Year vs Junior College Focus
+            const ctx1 = document.getElementById('typeComparisonChart').getContext('2d');
+            new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: ['AI · 빅데이터', '자율주행 · 모빌리티', '웹 · 응용 SW', '게임 · XR · 콘텐츠', '반도체 · 헬스 · 보안'],
+                    datasets: [
+                        {
+                            label: '4년제 대학교 개설 비중 (%)',
+                            data: [40, 30, 10, 10, 10],
+                            backgroundColor: '#3b82f6',
+                            borderRadius: 6
+                        },
+                        {
+                            label: '전문대학교 개설 비중 (%)',
+                            data: [10, 10, 45, 30, 5],
+                            backgroundColor: '#10b981',
+                            borderRadius: 6
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            max: 50,
+                            ticks: { callback: v => v + '%' }
+                        }
+                    },
+                    plugins: {
+                        legend: { position: 'top' }
+                    }
+                }
+            });
+
+            // Chart 2: Distance Uni Graduation vs Advancement
+            const ctx2 = document.getElementById('distanceUniChart').getContext('2d');
+            new Chart(ctx2, {
+                type: 'bar',
+                data: {
+                    labels: ['고려사이버(SW)', '서울사이버(기계)', '방통대(컴퓨터)', '사이버외대(안전)', '세종사이버(건축)'],
+                    datasets: [
+                        {
+                            label: '졸업자 수 (명)',
+                            data: [93, 33, 730, 17, 19],
+                            backgroundColor: 'rgba(59, 130, 246, 0.3)',
+                            borderColor: '#3b82f6',
+                            borderWidth: 1.5,
+                            borderRadius: 6
+                        },
+                        {
+                            label: '상급학교 진학자 (명)',
+                            data: [7, 2, 20, 1, 1],
+                            backgroundColor: '#8b5cf6',
+                            borderColor: '#7c3aed',
+                            borderWidth: 1.5,
+                            borderRadius: 6
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'top' } }
+                }
+            });
+
+            // Chart 3: Advancement Rates Donut/Bar
+            const ctx3 = document.getElementById('advancementRateChart').getContext('2d');
+            new Chart(ctx3, {
+                type: 'bar',
+                data: {
+                    labels: ['고려사이버', '서울사이버', '사이버외대', '세종사이버', '방통대'],
+                    datasets: [{
+                        label: '진학률 (%)',
+                        data: [7.5, 6.1, 5.9, 5.3, 2.7],
+                        backgroundColor: ['#2563eb', '#8b5cf6', '#06b6d4', '#10b981', '#cbd5e1'],
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { x: { max: 10, ticks: { callback: v => v + '%' } } }
+                }
+            });
+        };
+    </script>
+</body>
+</html>
