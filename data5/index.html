@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEIS 학교 급식 식단표 - 서비스 소개</title>
+    
+    <!-- React & ReactDOM CDN -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    
+    <!-- Babel Standalone for JSX compilation -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts: Inter & Noto Sans KR -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+KR:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Noto Sans KR', 'Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            200: '#bbf7d0',
+                            300: '#86efac',
+                            400: '#4ade80',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            font-family: 'Noto Sans KR', 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+        .dark .glass-panel {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(51, 65, 85, 0.6);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-200 min-h-screen flex flex-col">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // Navigation Header Component
+        function Header({ darkMode, setDarkMode }) {
+            return (
+                <header className="sticky top-0 z-50 glass-panel border-b border-slate-200/80 dark:border-slate-800/80 transition-all">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+                        {/* Logo */}
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-emerald-400 flex items-center justify-center text-white shadow-md shadow-brand-500/20">
+                                <i className="fa-solid font-bold fa-utensils text-lg"></i>
+                            </div>
+                            <span className="font-extrabold text-xl tracking-tight bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">
+                                학교 급식 알리미
+                            </span>
+                        </div>
+
+                        {/* Navigation Links */}
+                        <nav className="hidden md:flex items-center space-x-6 text-sm font-medium text-slate-600 dark:text-slate-300">
+                            <a href="../index.html" className="hover:text-brand-600 dark:hover:text-brand-400 transition-colors flex items-center gap-1.5">
+                                <i className="fa-solid fa-house"></i>
+                                <span>홈</span>
+                            </a>
+                            <a href="#features" className="hover:text-brand-600 dark:hover:text-brand-400 transition-colors">주요 기능</a>
+                            <a href="#target" className="hover:text-brand-600 dark:hover:text-brand-400 transition-colors">타겟 사용자</a>
+                            <a href="#tech" className="hover:text-brand-600 dark:hover:text-brand-400 transition-colors">기술 스택 & API</a>
+                        </nav>
+
+                        {/* Actions */}
+                        <div className="flex items-center space-x-3">
+                            <a 
+                                href="../index.html" 
+                                className="px-3.5 py-2 text-xs font-semibold rounded-lg bg-slate-200/80 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-all flex items-center gap-1.5"
+                            >
+                                <i className="fa-solid fa-house"></i>
+                                <span>홈</span>
+                            </a>
+
+                            <a 
+                                href="https://ai-2026-school.vercel.app/" 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="px-4 py-2 text-xs font-semibold rounded-lg bg-brand-600 hover:bg-brand-500 text-white shadow-md shadow-brand-600/30 transition-all flex items-center gap-1.5"
+                            >
+                                <i className="fa-solid fa-arrow-up-right-from-square"></i>
+                                <span>앱 바로가기</span>
+                            </a>
+
+                            <button
+                                onClick={() => setDarkMode(!darkMode)}
+                                className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+                                aria-label="Toggle Theme"
+                            >
+                                <i className={`fa-solid ${darkMode ? 'fa-sun text-amber-400' : 'fa-moon'}`}></i>
+                            </button>
+                        </div>
+                    </div>
+                </header>
+            );
+        }
+
+        function HeroSection() {
+            return (
+                <section className="relative pt-16 pb-20 md:pt-24 md:pb-28 overflow-hidden">
+                    <div className="absolute inset-0 -z-10 bg-[radial-gradient(45rem_50rem_at_top,theme(colors.brand.100),transparent)] dark:bg-[radial-gradient(45rem_50rem_at_top,rgba(22,163,74,0.15),transparent)] opacity-70"></div>
+                    
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-100 dark:bg-brand-900/50 text-brand-700 dark:text-brand-300 text-xs font-bold mb-6 ring-1 ring-inset ring-brand-600/20">
+                            <i className="fa-solid fa-circle-check"></i>
+                            교육부 나이스(NEIS) 공공 데이터 연동
+                        </div>
+
+                        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white max-w-4xl mx-auto leading-tight">
+                            전국 초·중·고등학교 급식 정보를 <br className="hidden sm:inline"/>
+                            <span className="bg-gradient-to-r from-brand-600 via-emerald-500 to-teal-500 bg-clip-text text-transparent">
+                                가장 직관적이고 빠르게
+                            </span> 확인하세요
+                        </h1>
+
+                        <p className="mt-6 text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed">
+                            일간, 주간, 월간 급식 식단표는 물론 19가지 스마트 알레르기 자동 감지 경고와 세부 영양성분·원산지 정보까지 한눈에 탐색할 수 있습니다.
+                        </p>
+
+                        <div className="mt-8 flex flex-wrap justify-center items-center gap-4">
+                            <a 
+                                href="https://ai-2026-school.vercel.app/"
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="px-6 py-3.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-bold shadow-lg shadow-brand-600/30 transition-all flex items-center gap-2 text-sm sm:text-base hover:-translate-y-0.5"
+                            >
+                                <i className="fa-solid fa-rocket"></i>
+                                <span>앱 바로가기</span>
+                            </a>
+                            <a 
+                                href="../index.html"
+                                className="px-6 py-3.5 rounded-xl bg-slate-200/80 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 font-bold transition-all flex items-center gap-2 text-sm sm:text-base"
+                            >
+                                <i className="fa-solid fa-house"></i>
+                                <span>홈으로 이동</span>
+                            </a>
+                        </div>
+                    </div>
+                </section>
+            );
+        }
+
+        function FeaturesSection() {
+            const features = [
+                {
+                    icon: "fa-calendar-days",
+                    color: "from-blue-500 to-cyan-500",
+                    title: "일간 / 주간 / 월간 뷰",
+                    desc: "오늘의 조식·중식·석식 메뉴 카드부터 이번 주 스케줄, 한 달 전체 캘린더 미리보기까지 다양한 뷰 모드를 지원합니다."
+                },
+                {
+                    icon: "fa-triangle-exclamation",
+                    color: "from-amber-500 to-rose-500",
+                    title: "스마트 알레르기 필터링",
+                    desc: "식약처 지정 19가지 유발물질 중 본인의 알레르기 항목을 등록해두면 식단 내 해당 음식에 자동으로 [주의] 경고 뱃지가 표시됩니다."
+                },
+                {
+                    icon: "fa-school",
+                    color: "from-emerald-500 to-teal-500",
+                    title: "전국 학교 실시간 검색",
+                    desc: "NEIS open API를 통해 전국 모든 초·중·고등학교를 실시간 검색하고 자주 찾는 학교를 저장하여 지속 탐색 가능합니다."
+                },
+                {
+                    icon: "fa-wheat-awn",
+                    color: "from-purple-500 to-indigo-500",
+                    title: "영양성분 & 원산지 서랍",
+                    desc: "칼로리, 탄수화물, 단백질, 지방 등 정밀 영양 분석 데이터와 식재료별 국내/국외 원산지 정보를 접이식 서랍으로 확인합니다."
+                }
+            ];
+
+            return (
+                <section id="features" className="py-16 bg-slate-100/60 dark:bg-slate-900/40">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="text-center max-w-3xl mx-auto mb-12">
+                            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+                                차별화된 핵심 기능
+                            </h2>
+                            <p className="mt-3 text-slate-600 dark:text-slate-400 text-sm sm:text-base">
+                                학생, 학부모, 교직원 모두를 신속하고 안전하게 지원하는 맞춤형 기능 모음
+                            </p>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                            {features.map((item, idx) => (
+                                <div key={idx} className="glass-panel rounded-2xl p-6 transition-all hover:shadow-xl hover:-translate-y-1">
+                                    <div className={`w-12 h-12 rounded-xl bg-gradient-to-tr ${item.color} text-white flex items-center justify-center text-xl mb-5 shadow-md`}>
+                                        <i className={`fa-solid ${item.icon}`}></i>
+                                    </div>
+                                    <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">
+                                        {item.title}
+                                    </h3>
+                                    <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                                        {item.desc}
+                                    </p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+            );
+        }
+
+        function TargetAudienceSection() {
+            const targets = [
+                {
+                    title: "학생 및 학부모",
+                    icon: "fa-user-graduate",
+                    badge: "안심 급식 체크",
+                    items: [
+                        "오늘 및 이번 주 급식 메뉴 사전 확인",
+                        "자녀의 알레르기 유발 식재료 포함 여부 실시간 점검",
+                        "일자별 총 칼로리 및 식단 구성 체크"
+                    ]
+                },
+                {
+                    title: "교직원 및 영양사",
+                    icon: "fa-chalkboard-user",
+                    badge: "손쉬운 일정 파악",
+                    items: [
+                        "PC 및 모바일 디바이스 맞춤형 반응형 인터페이스",
+                        "월간 캘린더를 활용한 이번 달 급식 제공일 한눈에 파악",
+                        "식재료 원산지 정보 및 영양성분 신속 모니터링"
+                    ]
+                },
+                {
+                    title: "특이 체질 & 알레르기 보유자",
+                    icon: "fa-shield-halved",
+                    badge: "스마트 안전 모드",
+                    items: [
+                        "식약처 지정 19가지 알레르기 유발 성분 자동 매칭",
+                        "위험 요소 감지 시 시각적 경고 뱃지 및 색상 안내",
+                        "개인화 설정 자동 유지 (LocalStorage 기반)"
+                    ]
+                }
+            ];
+
+            return (
+                <section id="target" className="py-16">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="text-center max-w-3xl mx-auto mb-12">
+                            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+                                타겟 사용자 및 활용 가치
+                            </h2>
+                            <p className="mt-3 text-slate-600 dark:text-slate-400 text-sm sm:text-base">
+                                누구나 더욱 편리하고 안심하고 급식을 즐길 수 있도록 제작되었습니다.
+                            </p>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            {targets.map((item, idx) => (
+                                <div key={idx} className="glass-panel rounded-2xl p-6 border border-slate-200 dark:border-slate-800 flex flex-col justify-between">
+                                    <div>
+                                        <div className="flex items-center justify-between mb-4">
+                                            <div className="w-10 h-10 rounded-lg bg-brand-100 dark:bg-brand-900/40 text-brand-600 dark:text-brand-400 flex items-center justify-center text-lg">
+                                                <i className={`fa-solid ${item.icon}`}></i>
+                                            </div>
+                                            <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                                                {item.badge}
+                                            </span>
+                                        </div>
+                                        <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4">
+                                            {item.title}
+                                        </h3>
+                                        <ul className="space-y-2.5 text-sm text-slate-600 dark:text-slate-400">
+                                            {item.items.map((sub, sIdx) => (
+                                                <li key={sIdx} className="flex items-start gap-2">
+                                                    <i className="fa-solid fa-check text-brand-500 mt-1 text-xs"></i>
+                                                    <span>{sub}</span>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+            );
+        }
+
+        function TechStackAndApiSection() {
+            const stack = [
+                { name: "React 19", role: "UI 라이브러리", desc: "최신 React 기능을 활용한 빠른 클라이언트 렌더링" },
+                { name: "TypeScript", role: "타입 안정성", desc: "NEIS API 데이터 구조 정의 및 사이드 이펙트 방지" },
+                { name: "Vite 6", role: "빌드 도구", desc: "빠른 초단위 개발 서버 및 최적화 Bundle 빌드" },
+                { name: "Tailwind CSS v4", role: "스타일링", desc: "유틸리티 퍼스트 기반 responsive 디자인 시스템" },
+            ];
+
+            const apis = [
+                {
+                    name: "급식 정보 API (mealServiceDietInfo)",
+                    endpoint: "https://open.neis.go.kr/hub/mealServiceDietInfo",
+                    params: "ATPT_OFCDC_SC_CODE, SD_SCHUL_CODE, MLSV_YMD"
+                },
+                {
+                    name: "학교 정보 검색 API (schoolInfo)",
+                    endpoint: "https://open.neis.go.kr/hub/schoolInfo",
+                    params: "SCHUL_NM (학교명 검색어)"
+                }
+            ];
+
+            return (
+                <section id="tech" className="py-16 bg-slate-100/60 dark:bg-slate-900/40">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="text-center max-w-3xl mx-auto mb-12">
+                            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+                                기술 스택 및 연동 API
+                            </h2>
+                            <p className="mt-3 text-slate-600 dark:text-slate-400 text-sm sm:text-base">
+                                공공 데이터 오픈 API 및 현대적인 프론트엔드 생태계를 기반으로 구축되었습니다.
+                            </p>
+                        </div>
+
+                        {/* Tech Stack Cards */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-12">
+                            {stack.map((item, idx) => (
+                                <div key={idx} className="glass-panel p-5 rounded-xl border border-slate-200 dark:border-slate-800">
+                                    <div className="text-xs font-bold text-brand-600 dark:text-brand-400 mb-1">
+                                        {item.role}
+                                    </div>
+                                    <div className="text-base font-bold text-slate-900 dark:text-white mb-2">
+                                        {item.name}
+                                    </div>
+                                    <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                                        {item.desc}
+                                    </p>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* API Info Cards */}
+                        <div className="space-y-4">
+                            <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                                <i className="fa-solid fa-network-wired text-brand-500"></i>
+                                교육부 NEIS Open API 연동 규격
+                            </h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {apis.map((api, idx) => (
+                                    <div key={idx} className="glass-panel p-5 rounded-xl">
+                                        <div className="font-bold text-sm text-slate-900 dark:text-white mb-2">
+                                            {api.name}
+                                        </div>
+                                        <div className="text-xs font-mono bg-slate-200/60 dark:bg-slate-800 p-2 rounded text-slate-700 dark:text-slate-300 mb-2 break-all">
+                                            {api.endpoint}
+                                        </div>
+                                        <div className="text-xs text-slate-500 dark:text-slate-400">
+                                            <span className="font-semibold text-slate-700 dark:text-slate-300">주요 파라미터:</span> {api.params}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            );
+        }
+
+        function Footer() {
+            return (
+                <footer className="mt-auto border-t border-slate-200 dark:border-slate-800 py-8 bg-white dark:bg-slate-950 text-slate-500 text-xs text-center">
+                    <div className="max-w-7xl mx-auto px-4 space-y-3">
+                        <p className="font-medium">
+                            NEIS 학교 급식 식단표 서비스 · 교육부 공공데이터 포털 오픈 API 사용
+                        </p>
+                        <div className="flex justify-center items-center gap-4 text-slate-400">
+                            <a href="../index.html" className="hover:text-slate-600 dark:hover:text-slate-200">홈</a>
+                            <span>•</span>
+                            <a href="https://ai-2026-school.vercel.app/" target="_blank" rel="noopener noreferrer" className="hover:text-slate-600 dark:hover:text-slate-200">앱 바로가기</a>
+                        </div>
+                        <p>© 2026 School Meal Notifier. All rights reserved.</p>
+                    </div>
+                </footer>
+            );
+        }
+
+        function App() {
+            const [darkMode, setDarkMode] = useState(false);
+
+            useEffect(() => {
+                if (darkMode) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+            }, [darkMode]);
+
+            return (
+                <div className="flex flex-col min-h-screen">
+                    <Header darkMode={darkMode} setDarkMode={setDarkMode} />
+                    <main className="flex-grow">
+                        <HeroSection />
+                        <FeaturesSection />
+                        <TargetAudienceSection />
+                        <TechStackAndApiSection />
+                    </main>
+                    <Footer />
+                </div>
+            );
+        }
+
+        // Render React DOM
+        const rootElement = document.getElementById('root');
+        const root = ReactDOM.createRoot(rootElement);
+        root.render(<App />);
+    </script>
+</body>
+</html>
