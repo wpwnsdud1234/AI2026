@@ -29,10 +29,26 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
+        @keyframes subtleGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
         body {
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
             word-break: keep-all;
+            background: linear-gradient(-45deg, #eef2ff, #e0f2fe, #dbeafe, #f0f9ff);
+            background-size: 300% 300%;
+            animation: subtleGradient 15s ease infinite;
         }
+
+        html.dark body {
+            background: linear-gradient(-45deg, #020617, #0f172a, #1e1b4b, #090d16);
+            background-size: 300% 300%;
+            animation: subtleGradient 15s ease infinite;
+        }
+
         .card-hover {
             transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -57,7 +73,7 @@
         }
     </style>
 </head>
-<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col antialiased">
+<body class="text-slate-800 dark:text-slate-100 min-h-screen flex flex-col antialiased">
 
     <!-- Header -->
     <header class="sticky top-0 z-40 w-full border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md">
@@ -264,7 +280,7 @@
                 </div>
                 <div class="pt-4 mt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs">
                     <span class="text-[10px] text-slate-400">Final Reflection</span>
-                    <button onclick="openModal(7)" class="font-bold text-indigo-600 dark:text-indigo-400 hover:underline">상세보기 →</button>
+                    <a href="./end/" class="font-bold text-indigo-600 dark:text-indigo-400 hover:underline">상세보기 →</a>
                 </div>
             </div>
 
